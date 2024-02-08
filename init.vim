@@ -1,396 +1,446 @@
-set mouse=a  " enable mouse
-set encoding=utf-8
-set number
-set cursorline
-set noswapfile
-set scrolloff=7
+" ============= Vim-Plug ============== "{{{
 
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set expandtab
-set autoindent
-set fileformat=unix
-filetype indent on      " load filetype-specific indent files
+" auto-install vim-plug
+if empty(glob('~/.config/nvim/autoload/plug.vim'))
+  silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall | source $MYVIMRC
+endif
 
-" for tabulation
-set smartindent
-set tabstop=2
-set expandtab
-set shiftwidth=2
+call plug#begin(expand('~/.config/nvim/plugged'))
 
-" horizontal split open below and right
-set splitbelow
-set splitright
+"}}}
 
-inoremap jk <esc>
+" ================= looks and GUI stuff ================== "{{{
 
-call plug#begin('~/.vim/plugged')
+Plug 'ryanoasis/vim-devicons'                           " pretty icons everywhere
+Plug 'luochen1990/rainbow'                              " rainbow parenthesis
+Plug 'hzchirs/vim-material'                             " material color themes
+Plug 'gregsexton/MatchTag'                              " highlight matching html tags
+Plug 'Jorengarenar/vim-MvVis'                           " move visual selection
+"}}}
 
-Plug 'neovim/nvim-lspconfig'
-Plug 'hrsh7th/nvim-cmp'
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'saadparwaiz1/cmp_luasnip'
-Plug 'L3MON4D3/LuaSnip'
+" ================= Functionalities ================= "{{{
 
-" color schemas
-Plug 'morhetz/gruvbox'  " colorscheme gruvbox
-Plug 'mhartington/oceanic-next'  " colorscheme OceanicNext
-Plug 'kaicataldo/material.vim', { 'branch': 'main' }
-Plug 'ayu-theme/ayu-vim'
-
-Plug 'xiyaowong/nvim-transparent'
-
-Plug 'Pocco81/auto-save.nvim'
-Plug 'justinmk/vim-sneak'
-
-" JS/JSX/TS
-Plug 'pangloss/vim-javascript'
-Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
-Plug 'maxmellon/vim-jsx-pretty'
-" TS from here https://jose-elias-alvarez.medium.com/configuring-neovims-lsp-client-for-typescript-development-5789d58ea9c
-Plug 'jose-elias-alvarez/null-ls.nvim'
-Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
-Plug 'nvim-lua/plenary.nvim'
-
-Plug 'prettier/vim-prettier', {
-  \ 'do': 'npm install --frozen-lockfile --production',
-  \ 'for': ['javascript', 'typescript', 'typescriptreact', 'javascriptreact', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'svelte', 'yaml', 'html'] }
-
-Plug 'bmatcuk/stylelint-lsp'
-
-Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.5' }
-Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-
-" Convenient floating terminal window
-"Plug 'voldikss/vim-floaterm'
-
-Plug 'ray-x/lsp_signature.nvim'
-
-Plug 'lspcontainers/lspcontainers.nvim'
-
+Plug 'neoclide/coc.nvim', {'branch': 'release'}         " LSP and more
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }     " fzf itself
+Plug 'junegunn/fzf.vim'                                 " fuzzy search integration
+Plug 'honza/vim-snippets'                               " actual snippets
+Plug 'Yggdroot/indentLine'                              " show indentation lines
+Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}  " better python
+Plug 'tpope/vim-commentary'                             " better commenting
+Plug 'mhinz/vim-startify'                               " cool start up screen
+Plug 'tpope/vim-fugitive'                               " git support
+Plug 'psliwka/vim-smoothie'                             " some very smooth ass scrolling
+Plug 'wellle/tmux-complete.vim'                         " complete words from a tmux panes
+Plug 'tpope/vim-eunuch'                                 " run common Unix commands inside Vim
+Plug 'machakann/vim-sandwich'                           " make sandwiches
+Plug 'christoomey/vim-tmux-navigator'                   " seamless vim and tmux navigation
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+Plug 'memgraph/cypher.vim'
 call plug#end()
 
-" Leader bind to space
-let mapleader = ","
+"}}}
 
-" Netrw file explorer settings
-let g:netrw_banner = 0 " hide banner above files
-let g:netrw_liststyle = 3 " tree instead of plain view
-let g:netrw_browse_split = 3 " vertical split window when Enter pressed on file
+" ==================== general config ======================== "{{{
 
-" Automatically format frontend files with prettier after file save
-let g:prettier#autoformat = 1
-let g:prettier#autoformat_require_pragma = 0
+set termguicolors                                       " Opaque Background
+set mouse=a                                             " enable mouse scrolling
+set clipboard+=unnamedplus                              " use system clipboard by default
+set tabstop=4 softtabstop=4 shiftwidth=4 autoindent     " tab width
+set expandtab smarttab                                  " tab key actions
+set incsearch ignorecase smartcase hlsearch             " highlight text while searching
+set list listchars=trail:»,tab:»-                       " use tab to navigate in list mode
+set fillchars+=vert:\▏                                  " requires a patched nerd font (try FiraCode)
+set wrap breakindent                                    " wrap long lines to the width set by tw
+set encoding=utf-8                                      " text encoding
+set number                                              " enable numbers on the left
+set relativenumber                                      " current line is 0
+set title                                               " tab title as file name
+set noshowmode                                          " dont show current mode below statusline
+set noshowcmd                                           " to get rid of display of last command
+set conceallevel=2                                      " set this so we wont break indentation plugin
+set splitright                                          " open vertical split to the right
+set splitbelow                                          " open horizontal split to the bottom
+set tw=90                                               " auto wrap lines that are longer than that
+set emoji                                               " enable emojis
+set history=1000                                        " history limit
+set backspace=indent,eol,start                          " sensible backspacing
+set undofile                                            " enable persistent undo
+set undodir=/tmp                                        " undo temp file directory
+set foldlevel=0                                         " open all folds by default
+set inccommand=nosplit                                  " visual feedback while substituting
+set showtabline=0                                       " always show tabline
+set grepprg=rg\ --vimgrep                               " use rg as default grepper
 
-" Disable quickfix window for prettier
-let g:prettier#quickfix_enabled = 0
+" performance tweaks
+set nocursorline
+set nocursorcolumn
+set scrolljump=5
+set lazyredraw
+set redrawtime=10000
+set synmaxcol=180
+set re=1
 
-" Turn on vim-sneak
-let g:sneak#label = 1
+" required by coc
+set hidden
+set nobackup
+set nowritebackup
+set cmdheight=1
+set updatetime=300
+set shortmess+=c
+set signcolumn=yes
 
-colorscheme gruvbox
-"colorscheme OceanicNext
-"let g:material_terminal_italics = 1
-" variants: default, palenight, ocean, lighter, darker, default-community,
-"           palenight-community, ocean-community, lighter-community,
-"           darker-community
-"let g:material_theme_style = 'darker'
-"colorscheme material
-if (has('termguicolors'))
-  set termguicolors
+" Themeing
+let g:material_style = 'oceanic'
+colorscheme vim-material
+hi Pmenu guibg='#00010a' guifg=white                    " popup menu colors
+hi Comment gui=italic cterm=italic                      " italic comments
+hi Search guibg=#b16286 guifg=#ebdbb2 gui=NONE          " search string highlight color
+hi NonText guifg=bg                                     " mask ~ on empty lines
+hi clear CursorLineNr                                   " use the theme color for relative number
+hi CursorLineNr gui=bold                                " make relative number bold
+hi SpellBad guifg=NONE gui=bold,undercurl               " misspelled words
+
+" colors for git (especially the gutter)
+hi DiffAdd  guibg=#0f111a guifg=#43a047
+hi DiffChange guibg=#0f111a guifg=#fdd835
+hi DiffRemoved guibg=#0f111a guifg=#e53935
+
+" coc multi cursor highlight color
+hi CocCursorRange guibg=#b16286 guifg=#ebdbb2
+
+"}}}
+
+" ======================== Plugin Configurations ======================== "{{{
+
+"" built in plugins
+let loaded_netrwPlugin = 1                              " disable netrw
+let g:omni_sql_no_default_maps = 1                      " disable sql omni completion
+let g:loaded_python_provider = 0
+let g:loaded_perl_provider = 0
+let g:loaded_ruby_provider = 0
+if glob('~/.python3') != ''
+  let g:python3_host_prog = expand('~/.python3/bin/python')
+else
+  let g:python3_host_prog = systemlist('which python3')[0]
 endif
 
-" variants: mirage, dark, dark
-"let ayucolor="mirage"
-"colorscheme ayu
+"" coc
 
-" turn off search highlight
-nnoremap ,<space> :nohlsearch<CR>
+" Navigate snippet placeholders using tab
+let g:coc_snippet_next = '<Tab>'
+let g:coc_snippet_prev = '<S-Tab>'
 
-lua << EOF
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+" list of the extensions to make sure are always installed
+let g:coc_global_extensions = [
+            \'coc-yank',
+            \'coc-pairs',
+            \'coc-json',
+            \'coc-css',
+            \'coc-html',
+            \'coc-tsserver',
+            \'coc-yaml',
+            \'coc-lists',
+            \'coc-snippets',
+            \'coc-pyright',
+            \'coc-clangd',
+            \'coc-prettier',
+            \'coc-xml',
+            \'coc-syntax',
+            \'coc-git',
+            \'coc-marketplace',
+            \'coc-highlight',
+            \'coc-sh',
+            \]
 
--- luasnip setup
-local luasnip = require 'luasnip'
-local async = require "plenary.async"
+" indentLine
+let g:indentLine_char_list = ['▏', '¦', '┆', '┊']
+let g:indentLine_setColors = 0
+let g:indentLine_setConceal = 0                         " actually fix the annoying markdown links conversion
+let g:indentLine_fileTypeExclude = ['startify']
 
--- nvim-cmp setup
-local cmp = require 'cmp'
-cmp.setup {
-  completion = {
-    autocomplete = false
-  },
-  snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end,
-  },
-  mapping = {
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.close(),
-    ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
-    },
-    ['<Tab>'] = function(fallback)
-      if vim.fn.pumvisible() == 1 then
-        vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
-      elseif luasnip.expand_or_jumpable() then
-        vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
-      else
-        fallback()
-      end
-    end,
-    ['<S-Tab>'] = function(fallback)
-      if vim.fn.pumvisible() == 1 then
-        vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-p>', true, true, true), 'n')
-      elseif luasnip.jumpable(-1) then
-        vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '')
-      else
-        fallback()
-      end
-    end,
-  },
-  sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-  },
-}
+"" startify
+let g:startify_padding_left = 10
+let g:startify_session_persistence = 1
+let g:startify_enable_special = 0
+let g:startify_change_to_vcs_root = 1
+let g:startify_lists = [
+    \ { 'type': 'dir'       },
+    \ { 'type': 'files'     },
+    \ { 'type': 'sessions'  },
+    \ { 'type': 'bookmarks' },
+    \ { 'type': 'commands' },
+    \ ]
 
-local nvim_lsp = require('lspconfig')
+" bookmark examples
+let  g:startify_bookmarks =  [
+    \ {'v': '~/.config/nvim'},
+    \ {'d': '~/.dotfiles' }
+    \ ]
 
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
+" custom commands
+let g:startify_commands = [
+    \ {'ch':  ['Health Check', ':checkhealth']},
+    \ {'ps': ['Plugins status', ':PlugStatus']},
+    \ {'pu': ['Update vim plugins',':PlugUpdate | PlugUpgrade']},
+    \ {'uc': ['Update coc Plugins', ':CocUpdate']},
+    \ {'h':  ['Help', ':help']},
+    \ ]
 
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+" custom banner
+let g:startify_custom_header = [
+ \ '',
+ \ '                                                    ▟▙            ',
+ \ '                                                    ▝▘            ',
+ \ '            ██▃▅▇█▆▖  ▗▟████▙▖   ▄████▄   ██▄  ▄██  ██  ▗▟█▆▄▄▆█▙▖',
+ \ '            ██▛▔ ▝██  ██▄▄▄▄██  ██▛▔▔▜██  ▝██  ██▘  ██  ██▛▜██▛▜██',
+ \ '            ██    ██  ██▀▀▀▀▀▘  ██▖  ▗██   ▜█▙▟█▛   ██  ██  ██  ██',
+ \ '            ██    ██  ▜█▙▄▄▄▟▊  ▀██▙▟██▀   ▝████▘   ██  ██  ██  ██',
+ \ '            ▀▀    ▀▀   ▝▀▀▀▀▀     ▀▀▀▀       ▀▀     ▀▀  ▀▀  ▀▀  ▀▀',
+ \ '',
+ \ '',
+ \ '',
+ \]
 
-  -- Enable completion triggered by <c-x><c-o>
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+" rainbow brackets
+let g:rainbow_active = 1
 
-  -- Mappings.
-  local opts = { noremap=true, silent=true }
+" tmux navigator
+let g:tmux_navigator_no_mappings = 1
 
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
-  buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+" semshi settings
+let g:semshi#error_sign	= v:false                       " let ms python lsp handle this
 
-  require "lsp_signature".on_attach({
-      bind = true, -- This is mandatory, otherwise border config won't get registered.
-      floating_window = true,
-      floating_window_above_cur_line = true,
-      floating_window_off_x = 20,
-      doc_lines = 10,
-      hint_prefix = '👻 '
-    }, bufnr)  -- Note: add in lsp client on-attach
-end
+"" FZF
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
 
--- TS setup
-local buf_map = function(bufnr, mode, lhs, rhs, opts)
-    vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts or {
-        silent = true,
-    })
-end
+let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.8, 'height': 0.8,'yoffset':0.5,'xoffset': 0.5, 'border': 'sharp' } }
+let g:fzf_tags_command = 'ctags -R'
 
-nvim_lsp.tsserver.setup({
-    on_attach = function(client, bufnr)
-        client.server_capabilities.document_formatting = false
-        client.server_capabilities.document_range_formatting = false
-        local ts_utils = require("nvim-lsp-ts-utils")
-        ts_utils.setup({})
-        ts_utils.setup_client(client)
-        buf_map(bufnr, "n", "gs", ":TSLspOrganize<CR>")
-        buf_map(bufnr, "n", "gi", ":TSLspRenameFile<CR>")
-        buf_map(bufnr, "n", "go", ":TSLspImportAll<CR>")
-        on_attach(client, bufnr)
-    end,
-})
+let $FZF_DEFAULT_OPTS = '--layout=reverse --inline-info'
+let $FZF_DEFAULT_COMMAND = "rg --files --hidden --glob '!.git/**' --glob '!build/**' --glob '!.dart_tool/**' --glob '!.idea' --glob '!node_modules'"
 
-local null_ls = require("null-ls")
-null_ls.setup({
-    sources = {
-        null_ls.builtins.diagnostics.eslint,
-        null_ls.builtins.code_actions.eslint,
-        null_ls.builtins.formatting.prettier
-    },
-    on_attach = on_attach
-})
+"}}}
 
--- Stylelint format after save
-require'lspconfig'.stylelint_lsp.setup{
-  settings = {
-    stylelintplus = {
-      --autoFixOnSave = true,
-      --autoFixOnFormat = true,
-    }
-  }
-}
+" ======================== Commands ============================= "{{{
+
+au BufEnter * set fo-=c fo-=r fo-=o                     " stop annoying auto commenting on new lines
+au FileType help wincmd L                               " open help in vertical split
+au BufWritePre * :%s/\s\+$//e                           " remove trailing whitespaces before saving
+au CursorHold * silent call CocActionAsync('highlight') " highlight match on cursor hold
+
+" enable spell only if file type is normal text
+let spellable = ['markdown', 'gitcommit', 'txt', 'text', 'liquid', 'rst']
+autocmd BufEnter * if index(spellable, &ft) < 0 | set nospell | else | set spell | endif
 
 
--- Use a loop to conveniently call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
-local servers = { 'pyright' }
-for _, lsp in ipairs(servers) do
-  nvim_lsp[lsp].setup {
-    on_attach = on_attach,
-    flags = {
-      debounce_text_changes = 150,
-    }
-  }
-end
-EOF
+" coc completion popup
+autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
+" startify if no passed argument or all buffers are closed
+augroup noargs
+    " startify when there is no open buffer left
+    autocmd BufDelete * if empty(filter(tabpagebuflist(), '!buflisted(v:val)')) | Startify | endif
 
-" Delete buffer while keeping window layout (don't close buffer's windows).
-" Version 2008-11-18 from http://vim.wikia.com/wiki/VimTip165
-if v:version < 700 || exists('loaded_bclose') || &cp
-  finish
-endif
-let loaded_bclose = 1
-if !exists('bclose_multiple')
-  let bclose_multiple = 1
-endif
+    " open startify on start if no argument was passed
+    autocmd VimEnter * if argc() == 0 | Startify | endif
+augroup END
 
-" Display an error message.
-function! s:Warn(msg)
-  echohl ErrorMsg
-  echomsg a:msg
-  echohl NONE
+" fzf if passed argument is a folder
+augroup folderarg
+    " change working directory to passed directory
+    autocmd VimEnter * if argc() != 0 && isdirectory(argv()[0]) | execute 'cd' fnameescape(argv()[0])  | endif
+
+    " start startify (fallback if fzf is closed)
+    autocmd VimEnter * if argc() != 0 && isdirectory(argv()[0]) | Startify  | endif
+
+    " start fzf on passed directory
+    autocmd VimEnter * if argc() != 0 && isdirectory(argv()[0]) | execute 'Files ' fnameescape(argv()[0]) | endif
+augroup END
+
+" Return to last edit position when opening files
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
+
+" python renaming and folding
+augroup python
+    autocmd FileType python nnoremap <leader>rn :Semshi rename <CR>
+    autocmd FileType python set foldmethod=syntax
+    autocmd FileType python syn sync fromstart
+    autocmd FileType python syn region foldImports start='"""' end='"""' fold keepend
+augroup end
+
+" format with available file format formatter
+command! -nargs=0 Format :call CocAction('format')
+
+" organize imports
+command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
+
+" files in fzf
+command! -bang -nargs=? -complete=dir Files
+    \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--inline-info']}), <bang>0)
+
+" advanced grep
+command! -nargs=* -bang Rg call RipgrepFzf(<q-args>, <bang>0)
+
+"}}}
+
+" ================== Custom Functions ===================== "{{{
+
+" advanced grep(faster with preview)
+function! RipgrepFzf(query, fullscreen)
+    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case %s || true'
+    let initial_command = printf(command_fmt, shellescape(a:query))
+    let reload_command = printf(command_fmt, '{q}')
+    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
 endfunction
 
-" Command ':Bclose' executes ':bd' to delete buffer in current window.
-" The window will show the alternate buffer (Ctrl-^) if it exists,
-" or the previous buffer (:bp), or a blank buffer if no previous.
-" Command ':Bclose!' is the same, but executes ':bd!' (discard changes).
-" An optional argument can specify which buffer to close (name or number).
-function! s:Bclose(bang, buffer)
-  if empty(a:buffer)
-    let btarget = bufnr('%')
-  elseif a:buffer =~ '^\d\+$'
-    let btarget = bufnr(str2nr(a:buffer))
+" startify file icons
+function! StartifyEntryFormat()
+    return 'WebDevIconsGetFileTypeSymbol(absolute_path) ." ". entry_path'
+endfunction
+
+" check if last inserted char is a backspace (used by coc pmenu)
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" show docs on things with K
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
   else
-    let btarget = bufnr(a:buffer)
+    call CocAction('doHover')
   endif
-  if btarget < 0
-    call s:Warn('No matching buffer for '.a:buffer)
-    return
-  endif
-  if empty(a:bang) && getbufvar(btarget, '&modified')
-    call s:Warn('No write since last change for buffer '.btarget.' (use :Bclose!)')
-    return
-  endif
-  " Numbers of windows that view target buffer which we will delete.
-  let wnums = filter(range(1, winnr('$')), 'winbufnr(v:val) == btarget')
-  if !g:bclose_multiple && len(wnums) > 1
-    call s:Warn('Buffer is in multiple windows (use ":let bclose_multiple=1")')
-    return
-  endif
-  let wcurrent = winnr()
-  for w in wnums
-    execute w.'wincmd w'
-    let prevbuf = bufnr('#')
-    if prevbuf > 0 && buflisted(prevbuf) && prevbuf != btarget
-      buffer #
-    else
-      bprevious
-    endif
-    if btarget == bufnr('%')
-      " Numbers of listed buffers which are not the target to be deleted.
-      let blisted = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != btarget')
-      " Listed, not target, and not displayed.
-      let bhidden = filter(eopy(blisted), 'bufwinnr(v:val) < 0')
-      " Take the first buffer, if any (could be more intelligent).
-      let bjump = (bhidden + blisted + [-1])[0]
-      if bjump > 0
-        execute 'buffer '.bjump
-      else
-        execute 'enew'.a:bang
-      endif
-    endif
-  endfor
-  execute 'bdelete'.a:bang.' '.btarget
-  execute wcurrent.'wincmd w'
 endfunction
-command! -bang -complete=buffer -nargs=? Bclose call <SID>Bclose(<q-bang>, <q-args>)
-nnoremap <silent> <Leader>bd :Bclose<CR>
 
-map gn :bn<cr>
-map gp :bp<cr>
-map gw :Bclose<cr>
+"}}}
 
-" Run Python and C files by Ctrl+h
-autocmd FileType python map <buffer> <C-h> :w<CR>:exec '!python3.11' shellescape(@%, 1)<CR>
-autocmd FileType python imap <buffer> <C-h> <esc>:w<CR>:exec '!python3.11' shellescape(@%, 1)<CR>
+" ======================== Custom Mappings ====================== "{{{
 
-autocmd FileType c map <buffer> <C-h> :w<CR>:exec '!gcc' shellescape(@%, 1) '-o out; ./out'<CR>
-autocmd FileType c imap <buffer> <C-h> <esc>:w<CR>:exec '!gcc' shellescape(@%, 1) '-o out; ./out'<CR>
+"" the essentials
+let mapleader=","
+nnoremap ; :
+nmap \ <leader>q
+map <F6> :Startify <CR>
+nmap <leader>r :so ~/.config/nvim/init.vim<CR>
+nmap <leader>q :bd<CR>
+nmap <leader>w :w<CR>
+map <leader>s :Format<CR>
+nmap <Tab> :bnext<CR>
+nmap <S-Tab> :bprevious<CR>
+noremap <leader>e :PlugInstall<CR>
+noremap <C-q> :q<CR>
 
-autocmd FileType go map <buffer> <C-h> :w<CR>:exec '!go run' shellescape(@%, 1)<CR>
-autocmd FileType go imap <buffer> <C-h> <esc>:w<CR>:exec '!go run' shellescape(@%, 1)<CR>
+" new line in normal mode and back
+map <Enter> o<ESC>
+map <S-Enter> O<ESC>
 
-autocmd FileType sh map <buffer> <C-h> :w<CR>:exec '!bash' shellescape(@%, 1)<CR>
-autocmd FileType sh imap <buffer> <C-h> <esc>:w<CR>:exec '!bash' shellescape(@%, 1)<CR>
+" use a different register for delete and paste
+nnoremap d "_d
+vnoremap d "_d
+vnoremap p "_dP
+nnoremap x "_x
 
-autocmd FileType python set colorcolumn=88
+" emulate windows copy, cut behavior
+vnoremap <LeftRelease> "+y<LeftRelease>
+vnoremap <C-c> "+y<CR>
+vnoremap <C-x> "+d<CR>
 
-" set relativenumber
-" set rnu
+" switch between splits using ctrl + {h,j,k,l}
+inoremap <C-h> <C-\><C-N><C-w>h
+inoremap <C-j> <C-\><C-N><C-w>j
+inoremap <C-k> <C-\><C-N><C-w>k
+inoremap <C-l> <C-\><C-N><C-w>l
+nnoremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
-let g:transparent_enabled = v:true
+" disable hl with 2 esc
+noremap <silent><esc> <esc>:noh<CR><esc>
 
-tnoremap <Esc> <C-\><C-n>
+" trim white spaces
+nnoremap <F2> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
 
-" Telescope bindings
-nnoremap ,f <cmd>Telescope find_files<cr>
-nnoremap ,g <cmd>Telescope live_grep<cr>
+" markdown preview
+au FileType markdown nmap <leader>m :MarkdownPreview<CR>
 
-" Go to next or prev tab by H and L accordingly
-nnoremap H gT
-nnoremap L gt
+"" FZF
+nnoremap <silent> <leader>f :Files<CR>
+nmap <leader>b :Buffers<CR>
+nmap <leader>c :Commands<CR>
+nmap <leader>t :BTags<CR>
+nmap <leader>/ :Rg<CR>
+nmap <leader>gc :Commits<CR>
+nmap <leader>gs :GFiles?<CR>
+nmap <leader>sh :History/<CR>
 
-" Autosave plugin
+" show mapping on all modes with F1
+nmap <F1> <plug>(fzf-maps-n)
+imap <F1> <plug>(fzf-maps-i)
+vmap <F1> <plug>(fzf-maps-x)
 
-lua << EOF
-require("auto-save").setup(
-    {
-    }
-)
-EOF
+"" coc
 
-" Telescope fzf plugin
-lua << EOF
-require('telescope').load_extension('fzf')
-EOF
+" use tab to navigate snippet placeholders
+inoremap <silent><expr> <TAB>
+    \ coc#pum#visible() ? coc#_select_confirm() :
+    \ coc#expandableOrJumpable() ?
+    \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+    \ check_back_space() ? "\<TAB>" :
+    \ coc#refresh()
 
-" Fast component creating for React app
-command CreateComponent :terminal '/Users/alexeygoloburdin/code/lms/frontend/createcomponent.py'
+let g:coc_snippet_next = '<tab>'
 
-" White colors for LSP messages in code
-set termguicolors
-hi DiagnosticError guifg=White
-hi DiagnosticWarn  guifg=White
-hi DiagnosticInfo  guifg=White
-hi DiagnosticHint  guifg=White
+" use enter to accept completion
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+
+" multi cursor shortcuts
+nmap <silent> <C-a> <Plug>(coc-cursors-word)
+xmap <silent> <C-a> <Plug>(coc-cursors-range)
+
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" other stuff
+nmap <leader>rn <Plug>(coc-rename)
+nmap <leader>o :OR <CR>
+
+" jump stuff
+nmap <leader>jd <Plug>(coc-definition)
+nmap <leader>jy <Plug>(coc-type-definition)
+nmap <leader>ji <Plug>(coc-implementation)
+nmap <leader>jr <Plug>(coc-references)
+
+" other coc actions
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+nmap <leader>a <Plug>(coc-codeaction-line)
+xmap <leader>a <Plug>(coc-codeaction-selected)
+
+" fugitive mappings
+nmap <leader>gd :Gdiffsplit<CR>
+nmap <leader>gb :Git blame<CR>
+
+" tmux navigator
+nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
+nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
+
+"}}}
+
+
+" ======================== Additional sourcing ====================== "{{{
+source ~/.config/nvim/statusline.vim
+
+"}}}
